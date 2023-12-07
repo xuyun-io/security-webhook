@@ -60,11 +60,13 @@ func handleDeployment(ctx *gin.Context, requestReview, responseReview *admission
 
 	for _, container := range deployment.Spec.Template.Spec.Containers {
 		if container.SecurityContext != nil {
-			if *container.SecurityContext.Privileged == true {
-				responseReview.Response.Allowed = false
-				responseReview.Response.Result.Message = fmt.Sprintf("Deployment: \"%s\" container: \"%s\" set as privileged container. Reject it", deployment.Name, container.Name)
-				ctx.JSON(http.StatusOK, responseReview)
-				return
+			if container.SecurityContext.Privileged != nil {
+				if *container.SecurityContext.Privileged == true {
+					responseReview.Response.Allowed = false
+					responseReview.Response.Result.Message = fmt.Sprintf("Deployment: \"%s\" container: \"%s\" set as privileged container. Reject it", deployment.Name, container.Name)
+					ctx.JSON(http.StatusOK, responseReview)
+					return
+				}
 			}
 		}
 	}
@@ -83,11 +85,13 @@ func handleStatefulSet(ctx *gin.Context, requestReview, responseReview *admissio
 
 	for _, container := range statefulSet.Spec.Template.Spec.Containers {
 		if container.SecurityContext != nil {
-			if *container.SecurityContext.Privileged == true {
-				responseReview.Response.Allowed = false
-				responseReview.Response.Result.Message = fmt.Sprintf("StatefulSet: \"%s\" container: \"%s\" set as privileged container. Reject it", statefulSet.Name, container.Name)
-				ctx.JSON(http.StatusOK, responseReview)
-				return
+			if container.SecurityContext.Privileged != nil {
+				if *container.SecurityContext.Privileged == true {
+					responseReview.Response.Allowed = false
+					responseReview.Response.Result.Message = fmt.Sprintf("StatefulSet: \"%s\" container: \"%s\" set as privileged container. Reject it", statefulSet.Name, container.Name)
+					ctx.JSON(http.StatusOK, responseReview)
+					return
+				}
 			}
 		}
 	}
@@ -106,11 +110,13 @@ func handleCronJob(ctx *gin.Context, requestReview, responseReview *admission.Ad
 
 	for _, container := range cronjob.Spec.JobTemplate.Spec.Template.Spec.Containers {
 		if container.SecurityContext != nil {
-			if *container.SecurityContext.Privileged == true {
-				responseReview.Response.Allowed = false
-				responseReview.Response.Result.Message = fmt.Sprintf("Cronjob: \"%s\" container: \"%s\" set as privileged container. Reject it", cronjob.Name, container.Name)
-				ctx.JSON(http.StatusOK, responseReview)
-				return
+			if container.SecurityContext.Privileged != nil {
+				if *container.SecurityContext.Privileged == true {
+					responseReview.Response.Allowed = false
+					responseReview.Response.Result.Message = fmt.Sprintf("Cronjob: \"%s\" container: \"%s\" set as privileged container. Reject it", cronjob.Name, container.Name)
+					ctx.JSON(http.StatusOK, responseReview)
+					return
+				}
 			}
 		}
 	}
@@ -129,11 +135,13 @@ func handleJob(ctx *gin.Context, requestReview, responseReview *admission.Admiss
 
 	for _, container := range job.Spec.Template.Spec.Containers {
 		if container.SecurityContext != nil {
-			if *container.SecurityContext.Privileged == true {
-				responseReview.Response.Allowed = false
-				responseReview.Response.Result.Message = fmt.Sprintf("Job: \"%s\" container: \"%s\" set as privileged container. Reject it", job.Name, container.Name)
-				ctx.JSON(http.StatusOK, responseReview)
-				return
+			if container.SecurityContext.Privileged != nil {
+				if *container.SecurityContext.Privileged == true {
+					responseReview.Response.Allowed = false
+					responseReview.Response.Result.Message = fmt.Sprintf("Job: \"%s\" container: \"%s\" set as privileged container. Reject it", job.Name, container.Name)
+					ctx.JSON(http.StatusOK, responseReview)
+					return
+				}
 			}
 		}
 	}
@@ -152,11 +160,13 @@ func handleDaemonSet(ctx *gin.Context, requestReview, responseReview *admission.
 
 	for _, container := range daemonSet.Spec.Template.Spec.Containers {
 		if container.SecurityContext != nil {
-			if *container.SecurityContext.Privileged == true {
-				responseReview.Response.Allowed = false
-				responseReview.Response.Result.Message = fmt.Sprintf("DaemonSet: \"%s\" container: \"%s\" set as privileged container. Reject it", daemonSet.Name, container.Name)
-				ctx.JSON(http.StatusOK, responseReview)
-				return
+			if container.SecurityContext.Privileged != nil {
+				if *container.SecurityContext.Privileged == true {
+					responseReview.Response.Allowed = false
+					responseReview.Response.Result.Message = fmt.Sprintf("DaemonSet: \"%s\" container: \"%s\" set as privileged container. Reject it", daemonSet.Name, container.Name)
+					ctx.JSON(http.StatusOK, responseReview)
+					return
+				}
 			}
 		}
 	}
