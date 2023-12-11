@@ -1,0 +1,119 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sre
+---
+# 自签名CA
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: security-webhook-issuer
+  namespace: sre
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: security-webhook-certificate
+  namespace: sre
+spec:
+  dnsNames:
+    - security-webhook
+    - security-webhook.sre
+    - security-webhook.sre.svc
+  duration: 8760h
+  renewBefore: 720h
+  issuerRef:
+    kind: Issuer
+    name: security-webhook-issuer
+  secretName: security-webhook-certificate-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: security-webhook
+  namespace: sre
+spec:
+  selector:
+    app: security-webhook
+  ports:
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: 9443
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: security-webhook
+  name: security-webhook
+  namespace: sre
+spec:
+  selector:
+    matchLabels:
+      app: security-webhook
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: security-webhook
+    spec:
+      containers:
+        - name: security-webhook
+          image: #url
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9443
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /etc/certs/
+              name: tls-cert
+      volumes:
+        - name: tls-cert
+          secret:
+            secretName: security-webhook
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: security-webhook-validate
+  annotations:
+    cert-manager.io/inject-ca-from: sre/security-webhook-certificate
+webhooks:
+  - admissionReviewVersions:
+      - v1
+    clientConfig:
+      caBundle: ""
+      service:
+        name: security-webhook
+        namespace: sre
+        port: 443
+        path: /validate-privileged-container
+    failurePolicy: Fail
+    name: validate-privileged-container.sre.svc
+    namespaceSelector:
+      matchExpressions:
+        - key: "kubernetes.io/metadata.name"
+          operator: NotIn
+          values: ["kube-system"]
+    rules:
+      - apiGroups:
+          - ""
+        apiVersions:
+          - v1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - deployments
+          - statefulsets
+          - cronjobs
+          - jobs
+          - daemonsets
+        scope: '*'
+    sideEffects: None
+    timeoutSeconds: 3
