@@ -20,6 +20,7 @@ var jobKind = v1.GroupVersionKind{Group: "batch", Version: "v1", Kind: "Job"}
 var daemonSetKind = v1.GroupVersionKind{Group: "apps", Version: "v1", Kind: "DaemonSet"}
 
 func PrivilegedContainerCheck(c *gin.Context) {
+	log.Logger.Debug("receive request")
 	var requestReview admission.AdmissionReview
 	err := c.BindJSON(&requestReview)
 	if err != nil {
@@ -27,6 +28,7 @@ func PrivilegedContainerCheck(c *gin.Context) {
 		return
 	}
 
+	log.Logger.Info("review data: " + fmt.Sprintf("%s/%s", requestReview.Request.Namespace, requestReview.Request.Name))
 	responseReview := &admission.AdmissionReview{}
 	responseReview.TypeMeta = requestReview.TypeMeta
 	responseReview.Request = requestReview.Request
