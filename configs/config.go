@@ -7,7 +7,7 @@ import (
 	"security-webhook/utils/log"
 )
 
-const DefaultConfigPath = "configs/default.yml"
+const DefaultConfigPath = "configs/default.yaml"
 
 var GlobalConfig *Config
 
