@@ -28,6 +28,10 @@ func SecurityValidate(c *gin.Context) {
 		log.Logger.Error("Failed to unmarshal Input as admission.AdmissionReview", zap.Error(err))
 		return
 	}
+	reviewContext.Response = &admission.AdmissionResponse{
+		UID:    reviewContext.Request.UID,
+		Result: &v1.Status{},
+	}
 
 	log.Logger.Info("review data: " + fmt.Sprintf("%s/%s", reviewContext.Request.Namespace, reviewContext.Request.Name))
 
