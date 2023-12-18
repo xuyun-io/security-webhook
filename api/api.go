@@ -11,7 +11,7 @@ var certFile = "/etc/certs/tls.crt"
 var keyFile = "/etc/certs/tls.key"
 
 func InitAPI(e *gin.Engine) {
-	e.POST("/validate-privileged-container", validating.PrivilegedContainerCheck)
+	e.POST("/security-validate", validating.SecurityValidate)
 
 	err := e.RunTLS(":9443", certFile, keyFile)
 	//err := e.Run(":9443")

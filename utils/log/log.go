@@ -24,5 +24,5 @@ func init() {
 	logger := zap.New(core)
 
 	Logger = logger
-	defer logger.Sync()
+
 }
