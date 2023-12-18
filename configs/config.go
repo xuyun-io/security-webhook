@@ -14,11 +14,12 @@ var GlobalConfig *Config
 func init() {
 	if err := loadConfigFromFile(DefaultConfigPath, &GlobalConfig); err != nil {
 		log.Logger.Info("load default config failed", zap.Error(err))
+		GlobalConfig.CheckItems = CheckItems{
+			ForbiddenPrivilegedContainer: true,
+		}
 	}
 
-	GlobalConfig.CheckItems = CheckItems{
-		ForbiddenPrivilegedContainer: false,
-	}
+	log.Logger.Info("Global config ", zap.Any("config values", GlobalConfig))
 }
 
 func loadConfigFromFile(file string, target interface{}) error {
