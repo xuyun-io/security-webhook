@@ -32,6 +32,9 @@ func PrivilegedContainerCheck(c *gin.Context) {
 	responseReview := &admission.AdmissionReview{}
 	responseReview.TypeMeta = requestReview.TypeMeta
 	responseReview.Request = requestReview.Request
+	responseReview.Response = &admission.AdmissionResponse{}
+	responseReview.Response.UID = requestReview.Request.UID
+	responseReview.Response.Result = &v1.Status{}
 
 	switch requestReview.Request.Kind {
 	case deploymentKind:
