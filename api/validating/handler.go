@@ -48,9 +48,9 @@ func SecurityValidate(c *gin.Context) {
 		handleJob(&reviewContext)
 	default:
 		reviewContext.Response.Allowed = false
-		c.JSON(http.StatusOK, reviewContext)
-		return
 	}
+	c.JSON(http.StatusOK, reviewContext)
+	return
 }
 
 func handleDeployment(reviewContext *admission.AdmissionReview) {
